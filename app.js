@@ -4,6 +4,7 @@ import { Low } from "lowdb";
 import { JSONFile } from "lowdb/node";
 import { setTimeout } from "timers/promises";
 import { config } from "./config.js";
+import cors from "cors";
 
 const {
     providerUrl,
@@ -32,10 +33,25 @@ for (const evtType of Object.entries(schema)) {
 }
 
 const app = express();
-
+app.use(cors());
 app.get("/getEvents", async function (req, res) {
+    const { evtName } = req.query;
+    const { filters } = req.query;
     await db.read();
-    const data = db.data[req.query.evtName];
+    let data = db.data[evtName];
+    if (filters) {
+        const filtersJson = JSON.parse(filters);
+        data = data.filter(function (item) {
+            for (const key in filtersJson) {
+                if (
+                    item.data[key] == undefined ||
+                    item.data[key].toLowerCase() != filtersJson[key].toLowerCase()
+                )
+                    return false;
+            }
+            return true;
+        });
+    }
     res.json(data);
 });
 
@@ -43,9 +59,6 @@ const startListener = async () => {
     while (true) {
         marketContract
             .getPastEvents("allEvents", {
-                filter: {
-                    value: [],
-                },
                 fromBlock: lastBlock + 1,
             })
             .then(function (events) {

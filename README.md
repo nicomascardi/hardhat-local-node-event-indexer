@@ -76,7 +76,7 @@ Would return
     "blockNumber": 16277529
 },
 {
-    "id": "log_d8362ca9",
+    "id": "log_c3e16b2f",
     "evtName": "ItemBought",
     "data": {
         "tokenId": 2
@@ -86,6 +86,28 @@ Would return
 }
 ```
 
+Using filters:
+
+```
+curl --request GET 'localhost:9091/getEvents?evtName={Event name defined in schema}&filters={"attr": "value"}'
+```
+For example:
+```
+curl --request GET 'localhost:9091/getEvents?evtName=ItemBought&filters={"tokenId": 1}'
+```
+Would return
+
+```
+{
+    "id": "log_d8362ca9",
+    "evtName": "ItemBought",
+    "data": {
+        "tokenId": 1,
+        "owner": "0xcdc9D7811974744355d74819D044b2B92D75b83e",
+    },
+    "blockNumber": 16277529
+}
+```
+
 ## To Do
-1. Allow to add conditions to queries (e.g. filter by attributes)
-2. Add exception handling
+1. Add exception handling
