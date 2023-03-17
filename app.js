@@ -45,7 +45,8 @@ app.get("/getEvents", async function (req, res) {
             for (const key in filtersJson) {
                 if (
                     item.data[key] == undefined ||
-                    item.data[key].toLowerCase() != filtersJson[key].toLowerCase()
+                    (isNaN(item.data[key]) && item.data[key].toLowerCase() != filtersJson[key].toLowerCase()) || 
+                    (!isNaN(item.data[key]) && item.data[key] != filtersJson[key])
                 )
                     return false;
             }
