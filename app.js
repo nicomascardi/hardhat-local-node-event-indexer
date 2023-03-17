@@ -22,7 +22,7 @@ const web3 = new Web3(
         timeout: connectionTimeout,
     })
 );
-const marketContract = new web3.eth.Contract(contractAbi, contractAddress);
+const contract = new web3.eth.Contract(contractAbi, contractAddress);
 
 let lastBlock = 0;
 const adapter = new JSONFile("db.json");
@@ -57,7 +57,7 @@ app.get("/getEvents", async function (req, res) {
 
 const startListener = async () => {
     while (true) {
-        marketContract
+        contract
             .getPastEvents("allEvents", {
                 fromBlock: lastBlock + 1,
             })
@@ -76,7 +76,6 @@ const startListener = async () => {
                         if (!db.data[evtName].find((evt) => evt.id == evtId)) {
                             db.data[evtName].push({ id: evtId, evtName, data, blockNumber });
                         }
-                        // console.log({ evtId, evtName, data, lastBlock });
                     }
                 }
             });
